@@ -9,7 +9,7 @@ use HercegDoo\AIComposePlugin\AIEmailService\Entity\RequestData;
 use HercegDoo\AIComposePlugin\AIEmailService\Request;
 use HercegDoo\AIComposePlugin\AIEmailService\Settings;
 
-final class GenereteEmailAction extends AbstractAction implements ValidateAction
+final class GenerateEmailAction extends AbstractAction implements ValidateAction
 {
     private ?string $senderName;
     private ?string $recipientName;
