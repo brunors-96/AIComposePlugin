@@ -49,8 +49,8 @@ final class GenereteEmailAction extends AbstractAction implements ValidateAction
 
             echo json_encode([
                 'status' => $status,
-                'respond' => $respond,
-            ]);
+                'respond' => htmlspecialchars($respond, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+            ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
         } catch (\Throwable $e) {
             error_log('Error message: ' . $e->getMessage());
             error_log('Error code: ' . $e->getCode());

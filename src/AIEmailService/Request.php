@@ -47,6 +47,15 @@ final class Request
             return $default;
         }
 
+        // Sanitização para prevenir injeção de código
+        if (is_string($data)) {
+            $data = trim($data);
+            // Limitar tamanho da entrada para prevenir DoS
+            if (strlen($data) > 10000) {
+                throw new \InvalidArgumentException('Input too long');
+            }
+        }
+
         return $data;
     }
 }

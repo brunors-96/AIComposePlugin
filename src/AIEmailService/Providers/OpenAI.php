@@ -113,9 +113,9 @@ final class OpenAI extends AbstractProvider
 
         $curl->setOpts([
             \CURLOPT_TIMEOUT => 60,
-            // not verifying the ssl certificate
-            \CURLOPT_SSL_VERIFYPEER => false,
-            \CURLOPT_SSL_VERIFYHOST => false,
+            // Habilitar verificação SSL para segurança
+            \CURLOPT_SSL_VERIFYPEER => true,
+            \CURLOPT_SSL_VERIFYHOST => 2,
         ]);
 
         try {
