@@ -4,6 +4,7 @@ namespace HercegDoo\AIComposePlugin\Actions\Settings;
 
 use HercegDoo\AIComposePlugin\Actions\AbstractAction;
 use HercegDoo\AIComposePlugin\Actions\ValidateAction;
+use HercegDoo\AIComposePlugin\Utilities\XSSProtection;
 
 class SaveInstruction extends AbstractAction implements ValidateAction
 {
@@ -27,6 +28,11 @@ class SaveInstruction extends AbstractAction implements ValidateAction
         $name = trim(\rcube_utils::get_input_string('_name', \rcube_utils::INPUT_POST));
         $text = trim(\rcube_utils::get_input_string('_text', \rcube_utils::INPUT_POST));
         $id = trim(\rcube_utils::get_input_string('_id', \rcube_utils::INPUT_POST));
+        
+        // Sanitizar dados para prevenir XSS
+        $name = XSSProtection::escape($name);
+        $text = XSSProtection::escape($text);
+        
         $predefinedInstructionsLimit = $this->getInstructionsLimit();
         $predefinedInstructions = $this->rcmail->user->get_prefs()['predefinedInstructions'] ?? [];
 

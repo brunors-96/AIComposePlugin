@@ -8,6 +8,8 @@ use HercegDoo\AIComposePlugin\AIEmailService\AIEmail;
 use HercegDoo\AIComposePlugin\AIEmailService\Entity\RequestData;
 use HercegDoo\AIComposePlugin\AIEmailService\Request;
 use HercegDoo\AIComposePlugin\AIEmailService\Settings;
+use HercegDoo\AIComposePlugin\Utilities\RateLimiter;
+use HercegDoo\AIComposePlugin\Utilities\XSSProtection;
 
 final class GenerateEmailAction extends AbstractAction implements ValidateAction
 {
@@ -49,7 +51,7 @@ final class GenerateEmailAction extends AbstractAction implements ValidateAction
 
             echo json_encode([
                 'status' => $status,
-                'respond' => htmlspecialchars($respond, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'),
+                'respond' => XSSProtection::escapeJson($respond),
             ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
         } catch (\Throwable $e) {
             error_log('Error message: ' . $e->getMessage());
@@ -57,8 +59,12 @@ final class GenerateEmailAction extends AbstractAction implements ValidateAction
             error_log('Error file: ' . $e->getFile());
             error_log('Error line: ' . $e->getLine());
 
-            $this->rcmail->output->show_message($this->translation('ai_request_error'), 'error');
-            $this->rcmail->output->send();
+            // Retornar JSON de erro sanitizado
+            echo json_encode([
+                'status' => 'error',
+                'respond' => XSSProtection::escapeJson($this->translation('ai_request_error')),
+                'debug' => $this->rcmail->config->get('debug_level') ? XSSProtection::escapeJson($e->getMessage()) : null
+            ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
         }
     }
 

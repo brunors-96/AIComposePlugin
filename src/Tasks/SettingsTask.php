@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace HercegDoo\AIComposePlugin\Tasks;
 
 use HercegDoo\AIComposePlugin\AIEmailService\Settings;
+use HercegDoo\AIComposePlugin\Tasks\AbstractTask;
+use HercegDoo\AIComposePlugin\Utilities\XSSProtection;
 
 class SettingsTask extends AbstractTask
 {
@@ -216,7 +218,10 @@ class SettingsTask extends AbstractTask
 
         foreach ($options as $value => $label) {
             $selected = ($defaultValue === $value) ? 'selected' : '';
-            $dropdown .= \sprintf('<option value="%s" %s>%s</option>', $value, $selected, $label);
+            // Sanitizar valor e label para prevenir XSS
+            $safeValue = XSSProtection::escapeAttribute($value);
+            $safeLabel = XSSProtection::escape($label);
+            $dropdown .= \sprintf('<option value="%s" %s>%s</option>', $safeValue, $selected, $safeLabel);
         }
 
         $dropdown .= '</select>';
