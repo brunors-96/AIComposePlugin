@@ -40,6 +40,31 @@ final class GenerateEmailAction extends AbstractAction implements ValidateAction
     public function handler(): void
     {
         header('Content-Type: application/json');
+        
+        // Rate limiting para prevenir abuso
+        $identifier = RateLimiter::generateIdentifier();
+        $rateLimitResult = RateLimiter::isAllowed($identifier, 'ai_generation');
+        
+        if (!$rateLimitResult['allowed']) {
+            $headers = RateLimiter::getRateLimitHeaders($rateLimitResult);
+            foreach ($headers as $name => $value) {
+                header("{$name}: {$value}");
+            }
+            
+            echo json_encode([
+                'status' => 'error',
+                'respond' => XSSProtection::escapeJson($this->translation('ai_rate_limit_exceeded')),
+                'retry_after' => $rateLimitResult['retry_after']
+            ], JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+            return;
+        }
+        
+        // Adicionar cabeçalhos de rate limit
+        $headers = RateLimiter::getRateLimitHeaders($rateLimitResult);
+        foreach ($headers as $name => $value) {
+            header("{$name}: {$value}");
+        }
+        
         try {
             $status = 'success';
             $this->preparePostData();

@@ -187,3 +187,4 @@ $labels['ai_help_example_17'] = 'e-mail persuasivo para pedir uma promoção, su
 $labels['ai_help_example_18'] = 'fiquei feliz por nos encontrarmos na conferência ontem, gostei da nossa conversa, vamos manter contato';
 
 $labels['ai_validation_error_malicious_content_detected'] = 'Conteúdo malicioso detectado. Por favor, revise suas instruções e tente novamente.';
+$labels['ai_rate_limit_exceeded'] = 'Limite de requisições excedido. Por favor, tente novamente mais tarde.';
