@@ -84,7 +84,7 @@ final class GenerateEmailAction extends AbstractAction implements ValidateAction
         $this->language = Request::postString('language');
         $this->recipientEmail = Request::postString('recipientEmail');
         $this->subject = Request::postString('subject');
-        $this->instructions = Request::postString('instructions');
+        $this->instructions = Request::postInstruction('instructions');
         $this->senderEmail = Request::postString('senderEmail');
         $this->previousConversation = Request::postString('previousConversation');
         $this->fixText = Request::postString('fixText');
@@ -189,27 +189,10 @@ final class GenerateEmailAction extends AbstractAction implements ValidateAction
 
     private function instructionsValidation(?string $instructions): void
     {
+        // Validação já feita no Request::postInstruction()
+        // Mantemos apenas verificação de campo vazio
         if (empty($instructions)) {
             $this->setError($this->translation('ai_validation_error_not_enough_characters_instruction'));
-            return;
-        }
-
-        // Validar contra Prompt Injection
-        $validation = PromptInjectionProtection::validateAndSanitize($instructions, true);
-        
-        if (!$validation['valid']) {
-            if ($validation['blocked']) {
-                $this->setError($this->translation('ai_validation_error_malicious_content_detected'));
-            } else {
-                foreach ($validation['warnings'] as $warning) {
-                    $this->setError($warning);
-                }
-            }
-        }
-
-        // Atualizar instruções com versão sanitizada se necessário
-        if (!empty($validation['warnings']) && $validation['valid']) {
-            $this->instructions = $validation['sanitized'];
         }
     }
 }
