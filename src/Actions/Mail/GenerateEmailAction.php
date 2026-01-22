@@ -10,6 +10,7 @@ use HercegDoo\AIComposePlugin\AIEmailService\Request;
 use HercegDoo\AIComposePlugin\AIEmailService\Settings;
 use HercegDoo\AIComposePlugin\Utilities\RateLimiter;
 use HercegDoo\AIComposePlugin\Utilities\XSSProtection;
+use HercegDoo\AIComposePlugin\Utilities\PromptInjectionProtection;
 
 final class GenerateEmailAction extends AbstractAction implements ValidateAction
 {
@@ -104,7 +105,10 @@ final class GenerateEmailAction extends AbstractAction implements ValidateAction
 
     private function preparePostData(): void
     {
-        $this->aiRequestData = RequestData::make((string) $this->recipientName, (string) $this->senderName, (string) $this->instructions, $this->style, $this->length, $this->creativity, $this->language);
+        // Sanitizar instruções antes de criar o RequestData
+        $sanitizedInstructions = PromptInjectionProtection::escapeForPrompt((string) $this->instructions);
+        
+        $this->aiRequestData = RequestData::make((string) $this->recipientName, (string) $this->senderName, $sanitizedInstructions, $this->style, $this->length, $this->creativity, $this->language);
 
         $this->aiRequestData->setRecipientEmail($this->recipientEmail);
         $this->aiRequestData->setSenderEmail($this->senderEmail);
@@ -187,6 +191,25 @@ final class GenerateEmailAction extends AbstractAction implements ValidateAction
     {
         if (empty($instructions)) {
             $this->setError($this->translation('ai_validation_error_not_enough_characters_instruction'));
+            return;
+        }
+
+        // Validar contra Prompt Injection
+        $validation = PromptInjectionProtection::validateAndSanitize($instructions, true);
+        
+        if (!$validation['valid']) {
+            if ($validation['blocked']) {
+                $this->setError($this->translation('ai_validation_error_malicious_content_detected'));
+            } else {
+                foreach ($validation['warnings'] as $warning) {
+                    $this->setError($warning);
+                }
+            }
+        }
+
+        // Atualizar instruções com versão sanitizada se necessário
+        if (!empty($validation['warnings']) && $validation['valid']) {
+            $this->instructions = $validation['sanitized'];
         }
     }
 }

@@ -185,3 +185,5 @@ $labels['ai_help_example_15'] = 'pense em 10 ideias de estratégias para criar u
 $labels['ai_help_example_16'] = 'e-mail de demissão profissional com aviso prévio de 1 mês conforme contrato, a empresa chama-se ACME';
 $labels['ai_help_example_17'] = 'e-mail persuasivo para pedir uma promoção, sugerindo que posso sair se não conseguir, pois existem outras oportunidades';
 $labels['ai_help_example_18'] = 'fiquei feliz por nos encontrarmos na conferência ontem, gostei da nossa conversa, vamos manter contato';
+
+$labels['ai_validation_error_malicious_content_detected'] = 'Conteúdo malicioso detectado. Por favor, revise suas instruções e tente novamente.';
