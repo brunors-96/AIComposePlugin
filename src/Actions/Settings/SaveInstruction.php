@@ -13,6 +13,10 @@ class SaveInstruction extends AbstractAction implements ValidateAction
         $id = trim(\rcube_utils::get_input_string('_id', \rcube_utils::INPUT_POST));
         $name = trim(\rcube_utils::get_input_string('_name', \rcube_utils::INPUT_POST));
         $text = trim(\rcube_utils::get_input_string('_text', \rcube_utils::INPUT_POST));
+        
+        // Sanitizar dados para validação segura
+        $name = XSSProtection::escape($name);
+        $text = XSSProtection::escape($text);
 
         if (empty($name) || empty($text)) {
             $this->rcmail->output->command('addinstructiontemplate', $id);
@@ -29,9 +33,10 @@ class SaveInstruction extends AbstractAction implements ValidateAction
         $text = trim(\rcube_utils::get_input_string('_text', \rcube_utils::INPUT_POST));
         $id = trim(\rcube_utils::get_input_string('_id', \rcube_utils::INPUT_POST));
         
-        // Sanitizar dados para prevenir XSS
+        // Sanitizar dados para prevenir XSS (já feito na validação)
         $name = XSSProtection::escape($name);
         $text = XSSProtection::escape($text);
+        $id = XSSProtection::escape($id);
         
         $predefinedInstructionsLimit = $this->getInstructionsLimit();
         $predefinedInstructions = $this->rcmail->user->get_prefs()['predefinedInstructions'] ?? [];
