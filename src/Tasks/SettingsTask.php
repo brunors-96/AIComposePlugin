@@ -198,7 +198,10 @@ class SettingsTask extends AbstractTask
     {
         $dropdown = '<select name="data[aic][' . $name . ']">'; // Ispravno ime za formu
         foreach ($options as $option) {
-            $dropdown .= '<option ' . ($option === $default ? 'selected' : '') . ' value="' . ($option) . '">' . ($this->translation('ai_' . $name . '_' . strtolower($option))) . '</option>';
+            $selected = ($option === $default ? 'selected' : '');
+            $safeValue = XSSProtection::escapeAttribute((string) $option);
+            $safeLabel = XSSProtection::escape($this->translation('ai_' . $name . '_' . strtolower($option)));
+            $dropdown .= '<option ' . $selected . ' value="' . $safeValue . '">' . $safeLabel . '</option>';
         }
         $dropdown .= '</select>';
 
