@@ -125,7 +125,7 @@ final class OpenAI extends AbstractProvider
                     ['role' => 'system', 'content' => 'You are a helpful personal assistant.'],
                     ['role' => 'user', 'content' => $prompt],
                 ],
-                'max_tokens' => $this->maxTokens,
+                'max_completion_tokens' => $this->maxTokens,
                 'temperature' => $this->creativity,
                 'n' => 1,
                 'stream' => false,
